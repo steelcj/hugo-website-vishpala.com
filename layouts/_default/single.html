@@ -1,0 +1,34 @@
+{{ define "main" }}
+  <article>
+    <header class="page-header">
+      {{ with .Parent }}
+      <a class="page-back" href="{{ .Permalink }}">← {{ $.Site.Params.back_to | default "Back to" }} {{ .Title }}</a>
+      {{ end }}
+
+      <div class="page-meta">
+        {{ if not .Date.IsZero }}
+        <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "January 2, 2006" }}</time>
+        {{ end }}
+        {{ with .Params.status }}<span class="page-meta-status">{{ . }}</span>{{ end }}
+        {{ with .Params.version }}<span class="page-meta-version">v{{ . }}</span>{{ end }}
+      </div>
+
+      <h1>{{ .Title }}</h1>
+      {{ with .Description }}<p class="page-subtitle">{{ . }}</p>{{ end }}
+    </header>
+
+    <div class="page-content">
+      {{ .Content }}
+    </div>
+
+    {{ if .Translations }}
+    <div class="translation-notice" role="note">
+      {{ range .Translations }}
+      <a href="{{ .Permalink }}" hreflang="{{ .Language.Lang }}" lang="{{ .Language.Lang }}">
+        {{ if eq .Language.Lang "fr-ca" }}Lire en français{{ else }}Read in English{{ end }}
+      </a>
+      {{ end }}
+    </div>
+    {{ end }}
+  </article>
+{{ end }}

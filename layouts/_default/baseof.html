@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="{{ .Site.Language.Lang }}">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="{{ with .Description }}{{ . }}{{ else }}{{ .Site.Params.description }}{{ end }}" />
+  <title>{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }} — {{ .Site.Title }}{{ end }}</title>
+
+  {{ $css := resources.Get "css/main.css" | minify | fingerprint }}
+  <link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}" />
+
+  {{ range .Translations }}
+  <link rel="alternate" hreflang="{{ .Language.Lang }}" href="{{ .Permalink }}" />
+  {{ end }}
+</head>
+<body>
+  <a class="skip-link" href="#main-content">{{ i18n "skip_to_content" }}</a>
+
+  <div class="site-wrapper">
+
+    <header class="site-header">
+
+      <a class="site-title-lockup" href="{{ .Site.BaseURL }}{{ .Site.Language.Lang }}/">
+        <img src="/img/vishpala-mark.svg" alt="" aria-hidden="true" class="site-logo" width="44" height="44">
+        <span class="site-title">{{ .Site.Title }}</span>
+      </a>
+
+      <div class="site-header-controls">
+        {{ range .Translations }}
+        <a class="lang-switch" href="{{ .Permalink }}" hreflang="{{ .Language.Lang }}" lang="{{ .Language.Lang }}">
+          {{ if eq .Language.Lang "fr-ca" }}FR{{ else }}EN{{ end }}
+        </a>
+        {{ end }}
+        <button class="search-trigger" id="search-trigger"
+          aria-label="{{ if eq .Site.Language.Lang `fr-ca` }}Rechercher{{ else }}Search{{ end }}"
+          aria-expanded="false"
+          aria-controls="search-modal">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="8"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+        </button>
+      </div>
+
+      <nav class="site-nav" aria-label="{{ if eq .Site.Language.Lang `fr-ca` }}Navigation principale{{ else }}Main navigation{{ end }}">
+        <ul>
+          {{ $menu := "main" }}
+          {{ if eq .Site.Language.Lang "fr-ca" }}{{ $menu = "main_fr" }}{{ end }}
+          {{ range index .Site.Menus $menu }}
+          <li>
+            <a href="{{ .URL }}"
+              {{ if eq $.RelPermalink .URL }}aria-current="page"{{ end }}>
+              {{ .Name }}
+            </a>
+          </li>
+          {{ end }}
+        </ul>
+      </nav>
+
+    </header>
+
+    {{ block "section-hero" . }}{{ end }}
+
+    <main id="main-content" class="site-main{{ if not .IsHome }} site-main--page{{ end }}">
+      {{ block "main" . }}{{ end }}
+    </main>
+
+    <footer class="site-footer">
+      <p>© {{ now.Year }} {{ .Site.Title }} — {{ i18n "copyright" }}</p>
+      <p><a href="{{ .Site.BaseURL }}{{ .Site.Language.Lang }}/about/legal/">{{ i18n "license" }}</a></p>
+    </footer>
+
+  </div>
+
+  <!-- Search modal — outside site-wrapper to avoid grid flow interference -->
+  <div id="search-modal" class="search-modal" role="dialog" aria-modal="true"
+    aria-label="{{ if eq .Site.Language.Lang `fr-ca` }}Recherche{{ else }}Search{{ end }}" hidden>
+    <div class="search-modal-inner">
+
+      <div class="search-bar">
+        <label for="search-input" class="sr-only">
+          {{ if eq .Site.Language.Lang `fr-ca` }}Rechercher{{ else }}Search{{ end }}
+        </label>
+        <svg class="search-bar-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input
+          id="search-input"
+          type="search"
+          autocomplete="off"
+          spellcheck="false"
+          placeholder="{{ if eq .Site.Language.Lang `fr-ca` }}Rechercher…{{ else }}Search…{{ end }}"
+        />
+        <button id="search-close" class="search-close"
+          aria-label="{{ if eq .Site.Language.Lang `fr-ca` }}Fermer{{ else }}Close{{ end }}">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+
+      <p id="search-status" class="search-status" role="status" aria-live="polite"></p>
+      <ul id="search-results" class="search-results" role="listbox"></ul>
+
+    </div>
+  </div>
+  <div id="search-backdrop" class="search-backdrop" hidden></div>
+
+  <script src="/js/search.js"></script>
+</body>
+</html>

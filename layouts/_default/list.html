@@ -1,0 +1,50 @@
+{{ define "section-hero" }}
+{{ $slug := .Title | urlize }}
+
+{{/* Left block class — derived from slug */}}
+{{ $leftBlock := "block-projects" }}
+{{ if or (eq $slug "areas") (eq $slug "domaines") }}{{ $leftBlock = "block-areas" }}{{ end }}
+{{ if or (eq $slug "resources") (eq $slug "ressources") }}{{ $leftBlock = "block-resources" }}{{ end }}
+{{ if or (eq $slug "about") (eq $slug "a-propos") }}{{ $leftBlock = "block-about" }}{{ end }}
+
+{{/* Right logo block — blue/red/white/yellow per section */}}
+{{ $rightBlock := "block-areas" }}
+{{ if or (eq $slug "areas") (eq $slug "domaines") }}{{ $rightBlock = "block-projects" }}{{ end }}
+{{ if or (eq $slug "resources") (eq $slug "ressources") }}{{ $rightBlock = "block-about" }}{{ end }}
+{{ if or (eq $slug "about") (eq $slug "a-propos") }}{{ $rightBlock = "block-resources" }}{{ end }}
+
+<div class="section-hero-row">
+  <div class="block {{ $leftBlock }} section-hero-main">
+    <h1>{{ .Title }}</h1>
+    {{ with .Description }}<p>{{ . }}</p>{{ end }}
+  </div>
+  <div class="block {{ $rightBlock }} section-hero-logo" aria-hidden="true">
+    <img src="/img/vishpala-mark.svg" alt="" width="120" height="120">
+  </div>
+</div>
+{{ end }}
+
+{{ define "main" }}
+  {{ if .Pages }}
+  <ul class="entry-list">
+    {{ range .Pages }}
+    <li>
+      <h2 class="entry-title">
+        <a href="{{ .Permalink }}">{{ .Title }}</a>
+      </h2>
+      {{ with .Description }}
+      <p class="entry-description">{{ . }}</p>
+      {{ end }}
+      {{ if not .Date.IsZero }}
+      <p class="entry-meta">
+        <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "January 2, 2006" }}</time>
+        {{ with .Params.status }}<span class="page-meta-status">{{ . }}</span>{{ end }}
+      </p>
+      {{ end }}
+    </li>
+    {{ end }}
+  </ul>
+  {{ else }}
+  <p>{{ if eq .Site.Language.Lang "fr-ca" }}Aucune entrée pour l'instant.{{ else }}No entries yet.{{ end }}</p>
+  {{ end }}
+{{ end }}
