@@ -1,0 +1,310 @@
+# Pagefind — Manual Installation on Ubuntu 26.04 LTS
+
+Version: 0.1.2
+Status: Draft
+Style Guides: style-guide--technical-documentation-for-technologists-v0.2.0.md, web-ready-unrendered-markdown-using-apa-7-v0_2_2.md
+
+## Abstract
+
+Why this way? This is a way to avoid installing npm on your system and allows you to get a working Pagefind directly from the creators. This document is a production walkthrough for manually installing Pagefind on Linux/nix. It was tested on Ubuntu 26.04 LTS, following the same versioned binary pattern established by `hugo-tool`. It covers fetching the latest release version from the GitHub API, downloading the correct binary for the platform, verifying the download, installing into a versioned directory under `~/bin/pagefind-tool/`, and rendering a wrapper script at `~/bin/pagefind`. On completion, `pagefind` is available on `PATH` and can be invoked directly from any Hugo project build script.
+
+## Sources and Acknowledgements
+
+The Pagefind project is maintained by <a name="apa-pagefind-docs-citation"></a>[CloudCannon (2025)](#apa-pagefind-docs-reference). Release assets and checksums are published to the <a name="apa-pagefind-releases-citation"></a>[Pagefind GitHub releases page (CloudCannon, 2025)](#apa-pagefind-releases-reference). The versioned binary and wrapper pattern followed here is derived from the `hugo-tool` installer established for this workstation.
+
+## 1. Prerequisites
+
+`curl` and `jq` must be available on `PATH`. Verify:
+
+```bash
+curl --version | head -1
+jq --version
+```
+
+`jq` is available in the Ubuntu 26.04 package repository if not already installed:
+
+```bash
+sudo apt install jq
+```
+
+The target directory `~/bin` must exist and be on `PATH`. This is already the case on this workstation from the `hugo-tool` setup.
+
+## 2. Fetch the latest release version
+
+The Pagefind project publishes releases to GitHub. The latest release tag is retrieved from the GitHub API:
+
+```bash
+LATEST_VERSION=$(curl -s https://api.github.com/repos/CloudCannon/pagefind/releases/latest \
+  | jq -r '.tag_name')
+echo $LATEST_VERSION
+```
+
+Expected output:
+
+```text
+v1.5.1
+```
+
+Note that the repository owner is `CloudCannon`, not `Pagefind`. The GitHub API URL must use the correct owner or it will return a 404.
+
+## 3. Download the binary
+
+Pagefind publishes precompiled static binaries for each release. The Linux x86_64 binary is a `musl`-linked static executable with no runtime dependencies. Download it:
+
+```bash
+curl -LO \
+  "https://github.com/CloudCannon/pagefind/releases/download/${LATEST_VERSION}/pagefind-${LATEST_VERSION}-x86_64-unknown-linux-musl.tar.gz"
+```
+
+The available asset names for other platforms follow the same pattern:
+
+| Platform | Asset name suffix |
+|----------|------------------|
+| Linux x86_64 | `x86_64-unknown-linux-musl.tar.gz` |
+| Linux ARM64 | `aarch64-unknown-linux-musl.tar.gz` |
+| macOS Intel | `x86_64-apple-darwin.tar.gz` |
+| macOS Apple Silicon | `aarch64-apple-darwin.tar.gz` |
+
+### 3.1 Verify the checksum
+
+Pagefind publishes SHA-256 checksums alongside each release asset. Download the checksum file and verify:
+
+```bash
+curl -LO \
+  "https://github.com/CloudCannon/pagefind/releases/download/${LATEST_VERSION}/pagefind-${LATEST_VERSION}-x86_64-unknown-linux-musl.tar.gz.sha256"
+
+sha256sum --check "pagefind-${LATEST_VERSION}-x86_64-unknown-linux-musl.tar.gz.sha256"
+```
+
+Expected output:
+
+```text
+pagefind-v1.5.1-x86_64-unknown-linux-musl.tar.gz: OK
+```
+
+Do not proceed if the checksum fails.
+
+## 4. Install into a versioned directory
+
+Following the `hugo-tool` pattern, the binary is installed into a versioned subdirectory under `~/bin/pagefind-tool/`, not directly into `~/bin/`. This allows multiple versions to coexist and makes rollback straightforward.
+
+```bash
+mkdir -p ~/bin/pagefind-tool/${LATEST_VERSION}
+tar -xzf "pagefind-${LATEST_VERSION}-x86_64-unknown-linux-musl.tar.gz" \
+  -C ~/bin/pagefind-tool/${LATEST_VERSION}/
+ls -al ~/bin/pagefind-tool/${LATEST_VERSION}/
+```
+
+Expected output:
+
+```text
+total 9832
+drwxrwxr-x 2 initial initial     4096 Jun 15 18:01 .
+drwxrwxr-x 3 initial initial     4096 Jun 15 17:57 ..
+-rwxr-xr-x 1 initial initial 10058288 Apr 12 08:35 pagefind
+```
+
+Make the binary executable:
+
+```bash
+chmod +x ~/bin/pagefind-tool/${LATEST_VERSION}/pagefind
+```
+
+Verify the binary runs:
+
+```bash
+~/bin/pagefind-tool/${LATEST_VERSION}/pagefind --version
+```
+
+Expected output:
+
+```text
+pagefind v1.5.1
+```
+
+The resulting directory structure:
+
+```text
+~/bin/pagefind-tool/
+└── v1.5.1/
+    └── pagefind
+```
+
+## 5. Render the wrapper script
+
+The wrapper at `~/bin/pagefind` delegates to the versioned binary. It follows the same pattern as the `hugo-tool` wrapper at `~/bin/hugo`:
+
+```bash
+cat > ~/bin/pagefind << EOF
+#!/usr/bin/env bash
+# pagefind — wrapper managed by pagefind-tool.
+# Points to the currently active version. To update, rerun the installer
+# and render a new wrapper pointing to the new version directory.
+# Do not edit the rendered copy at ~/bin/pagefind by hand.
+exec "\$HOME/bin/pagefind-tool/${LATEST_VERSION}/pagefind" "\$@"
+EOF
+chmod +x ~/bin/pagefind
+```
+
+## 6. Verify
+
+Confirm the wrapper resolves correctly and the binary is functional:
+
+```bash
+which pagefind
+pagefind --version
+```
+
+Expected output:
+
+```text
+/home/initial/bin/pagefind
+pagefind v1.5.1
+```
+
+## 7. Clean up
+
+Remove the downloaded tarball and checksum file:
+
+```bash
+rm "pagefind-${LATEST_VERSION}-x86_64-unknown-linux-musl.tar.gz"
+rm "pagefind-${LATEST_VERSION}-x86_64-unknown-linux-musl.tar.gz.sha256"
+```
+
+## 8. Usage in a Hugo project
+
+With Pagefind on `PATH`, the build script at `scripts/build.sh` in any Hugo project calls it directly after `hugo --minify`:
+
+```bash
+hugo --minify
+pagefind --site site
+```
+
+Expected output:
+
+```text
+Running Pagefind v1.5.2
+Running from: "/home/initial/Downloads/vishpala-v0.7.0"
+Source:       "site"
+Output:       "site/pagefind"
+[Walking source directory]
+Found 45 files matching **/*.{html}
+[Parsing files]
+Did not find a data-pagefind-body element on the site.
+↳ Indexing all <body> elements on the site.
+[Reading languages]
+Discovered 2 languages: fr-ca, en-ca
+[Building search indexes]
+Total: 
+  Indexed 2 languages
+  Indexed 44 pages
+  Indexed 1791 words
+  Indexed 0 filters
+  Indexed 0 sorts
+Finished in 0.042 seconds
+```
+
+Pagefind crawls the rendered HTML in the `site/` output directory, builds a chunked search index, and writes it to `site/pagefind/`. The index is served as static files alongside the rest of the site.
+
+### 8.1 Running the full build script
+
+The project's `scripts/build.sh` wraps both steps:
+
+```bash
+bash scripts/build.sh
+```
+
+Expected output:
+
+```text
+Building Hugo site...
+Start building sites … 
+hugo v0.163.1-2a4fd58818ffdf45bbb2a97ab119bb4c46cd93f0 linux/amd64 BuildDate=2026-06-11T15:34:40Z VendorInfo=gohugoio
+                  │ EN - CA │ FR - CA 
+──────────────────┼─────────┼─────────
+ Pages            │      31 │      30 
+ Paginator pages  │       0 │       0 
+ Non-page files   │       0 │       0 
+ Static files     │       1 │       1 
+ Processed images │       0 │       0 
+ Aliases          │       1 │       0 
+ Cleaned          │       0 │       0 
+Total in 54 ms
+Running Pagefind indexer...
+Running Pagefind v1.5.2
+Running from: "/home/initial/Downloads/vishpala-v0.7.0"
+Source:       "site"
+Output:       "site/pagefind"
+[Walking source directory]
+Found 45 files matching **/*.{html}
+[Parsing files]
+Did not find a data-pagefind-body element on the site.
+↳ Indexing all <body> elements on the site.
+[Reading languages]
+Discovered 2 languages: en-ca, fr-ca
+[Building search indexes]
+Total: 
+  Indexed 2 languages
+  Indexed 44 pages
+  Indexed 1791 words
+  Indexed 0 filters
+  Indexed 0 sorts
+Finished in 0.029 seconds
+Done. Site built to site/ with search index at site/pagefind/
+```
+
+### 8.2 Development server
+
+`hugo server` serves from memory and does not write to the `site/` output directory, so the Pagefind index is not available and search will not function in this mode. This is expected behaviour. For full-featured local testing including search, use the build script and serve the output directory with a static file server, then run `hugo server` separately for content editing. Search and content editing are two separate workflows.
+
+After running `scripts/build.sh`, start the Hugo development server from the project root:
+
+```bash
+hugo server
+```
+
+Expected output:
+
+```text
+port 1313 already in use, attempting to use an available port
+Watching for changes in /home/initial/Downloads/vishpala-v0.7.0/{archetypes,assets,content,i18n,layouts,static}
+Watching for config changes in /home/initial/Downloads/vishpala-v0.7.0/hugo.toml
+Start building sites … 
+hugo v0.163.1-2a4fd58818ffdf45bbb2a97ab119bb4c46cd93f0 linux/amd64 BuildDate=2026-06-11T15:34:40Z VendorInfo=gohugoio
+                  │ EN - CA │ FR - CA 
+──────────────────┼─────────┼─────────
+ Pages            │      31 │      30 
+ Paginator pages  │       0 │       0 
+ Non-page files   │       0 │       0 
+ Static files     │       1 │       1 
+ Processed images │       0 │       0 
+ Aliases          │       1 │       0 
+ Cleaned          │       0 │       0 
+Built in 46 ms
+Environment: "development"
+Serving pages from disk
+Running in Fast Render Mode. For full rebuilds on change: hugo server --disableFastRender
+Web Server is available at http://localhost:33235/ (bind address 127.0.0.1) 
+Press Ctrl+C to stop
+```
+
+## Resources
+
+### Pagefind
+- [Pagefind documentation](#apa-pagefind-docs-reference)
+- [Pagefind releases](#apa-pagefind-releases-reference)
+
+## References
+
+<a name="apa-pagefind-docs-reference"></a>CloudCannon. (2025). *Pagefind documentation*. CloudCannon. https://pagefind.app/
+[Return to citation](#apa-pagefind-docs-citation)
+
+<a name="apa-pagefind-releases-reference"></a>CloudCannon. (2025). *Pagefind releases*. GitHub. https://github.com/CloudCannon/pagefind/releases
+[Return to citation](#apa-pagefind-releases-citation)
+
+## Changelog
+
+| Version | Status | Notes |
+|---------|--------|-------|
+| 0.1.2 | Draft | Corrected repo owner in section 3 download URL; added section 8.2 on development server behaviour; corrected changelog typo |
+| 0.1.0 | Draft | Initial draft |
