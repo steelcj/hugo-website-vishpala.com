@@ -19,9 +19,9 @@ stages:
         install_hint: "Install via hugo-tool: https://github.com/steelcj/hugo-tool"
 
       - name: Pagefind index
-        command: pagefind --site site
-        require: pagefind
-        install_hint: "Install via pagefind-tool: https://github.com/steelcj/pagefind-tool"
+        command: python -m pagefind --site site
+        require: python
+        install_hint: "Install pagefind via pip: pip install pagefind"
 
   deploy:
     description: Deploy the built site to the production server
