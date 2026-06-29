@@ -1,5 +1,5 @@
 # Hugo build output — committed for GitHub Pages deployment
-# site/ is intentionally tracked
+site/ is intentionally tracked
 
 # Hugo cache
 .hugo_build.lock

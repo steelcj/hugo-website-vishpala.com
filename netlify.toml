@@ -1,0 +1,7 @@
+[build]
+  command        = "python scripts/build.py"
+  publish        = "site"
+
+[build.environment]
+  HUGO_VERSION   = "0.162.0"
+  PYTHON_VERSION = "3.11"

@@ -8,6 +8,17 @@ Versions correspond to the site package version, not the Hugo site version in `V
 
 ## [Unreleased]
 
+## [0.1.20] — 2026-06-28
+
+### Added
+- `netlify.toml` — Netlify build configuration; pins Hugo to v0.162.0 and Python to 3.11; build command is `python scripts/build.py`; publish directory is `site`
+- `requirements.txt` — Python dependency declaration for Netlify; declares `pyyaml` as the only non-standard-library dependency
+- `docs/en-ca/netlify-deployment-v0.1.0.md` — step-by-step Netlify deployment guide covering project preparation, Netlify connection, ongoing workflow, custom domain setup, and troubleshooting
+
+### Changed
+- `hugo.toml` — `baseURL` reverted to `https://vishpala.com/`; Netlify handles URL assignment independently and overrides this value for preview deployments
+- `.gitignore` — `site/` remains untracked; Netlify builds from source on every push so built output does not need to be committed
+
 ## [0.1.19] — 2026-06-28
 
 ### Changed

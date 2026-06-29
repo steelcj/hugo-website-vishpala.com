@@ -1,4 +1,4 @@
-baseURL = 'https://steelcj.github.io/hugo-website-vishpala.com/'
+baseURL = 'https://vishpala.com/'
 title = 'Vishpala'
 publishDir = 'site'
 
