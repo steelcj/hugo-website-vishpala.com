@@ -5,3 +5,4 @@
 [build.environment]
   HUGO_VERSION   = "0.162.0"
   PYTHON_VERSION = "3.11"
+  HUGO_BASEURL   = "https://vishpala.netlify.app/"
