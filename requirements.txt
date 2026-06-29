@@ -1,2 +1,2 @@
 pyyaml
-pagefind
+pagefind[bin]
