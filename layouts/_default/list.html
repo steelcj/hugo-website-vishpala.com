@@ -1,17 +1,17 @@
 {{ define "section-hero" }}
-{{ $slug := .Title | urlize }}
+{{ $section := .Section }}
 
-{{/* Left block class — derived from slug */}}
+{{/* Left block class — derived from section directory name, language-independent */}}
 {{ $leftBlock := "block-projects" }}
-{{ if or (eq $slug "areas") (eq $slug "domaines") }}{{ $leftBlock = "block-areas" }}{{ end }}
-{{ if or (eq $slug "resources") (eq $slug "ressources") }}{{ $leftBlock = "block-resources" }}{{ end }}
-{{ if or (eq $slug "about") (eq $slug "a-propos") }}{{ $leftBlock = "block-about" }}{{ end }}
+{{ if eq $section "areas" }}{{ $leftBlock = "block-areas" }}{{ end }}
+{{ if eq $section "resources" }}{{ $leftBlock = "block-resources" }}{{ end }}
+{{ if eq $section "about" }}{{ $leftBlock = "block-about" }}{{ end }}
 
-{{/* Right logo block — blue/red/white/yellow per section */}}
+{{/* Right logo block — contrasting colour per section */}}
 {{ $rightBlock := "block-areas" }}
-{{ if or (eq $slug "areas") (eq $slug "domaines") }}{{ $rightBlock = "block-projects" }}{{ end }}
-{{ if or (eq $slug "resources") (eq $slug "ressources") }}{{ $rightBlock = "block-about" }}{{ end }}
-{{ if or (eq $slug "about") (eq $slug "a-propos") }}{{ $rightBlock = "block-resources" }}{{ end }}
+{{ if eq $section "areas" }}{{ $rightBlock = "block-projects" }}{{ end }}
+{{ if eq $section "resources" }}{{ $rightBlock = "block-about" }}{{ end }}
+{{ if eq $section "about" }}{{ $rightBlock = "block-resources" }}{{ end }}
 
 <div class="section-hero-row">
   <div class="block {{ $leftBlock }} section-hero-main">
@@ -45,6 +45,6 @@
     {{ end }}
   </ul>
   {{ else }}
-  <p>{{ if eq .Site.Language.Lang "fr-ca" }}Aucune entrée pour l'instant.{{ else }}No entries yet.{{ end }}</p>
+  <p>{{ if eq .Site.Language.Lang "fr-ca" }}Aucune entrée pour l'instant.{{ else if eq .Site.Language.Lang "es" }}Ninguna entrada por el momento.{{ else }}No entries yet.{{ end }}</p>
   {{ end }}
 {{ end }}

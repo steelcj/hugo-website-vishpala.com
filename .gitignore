@@ -1,12 +1,9 @@
-# Hugo build output
-site/
+# Hugo build output — committed for GitHub Pages deployment
+# site/ is intentionally tracked
 
 # Hugo cache
 .hugo_build.lock
 resources/_gen/
-
-# Pagefind index (generated at build time)
-site/pagefind/
 
 # OS
 .DS_Store

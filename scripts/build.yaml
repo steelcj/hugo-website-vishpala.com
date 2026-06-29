@@ -1,0 +1,28 @@
+# scripts/build.yaml — Vishpala.com build and deploy pipeline
+#
+# This file defines every step in the pipeline in the order they run.
+# Edit this file to add, remove, or reorder steps.
+# build.py reads this file and executes each step in sequence.
+#
+# Stages:
+#   build  — compile the site and generate the search index
+#   deploy — transfer built output to production (not yet defined)
+
+stages:
+
+  build:
+    description: Build the site and generate the search index
+    steps:
+      - name: Hugo build
+        command: hugo --minify
+        require: hugo
+        install_hint: "Install via hugo-tool: https://github.com/steelcj/hugo-tool"
+
+      - name: Pagefind index
+        command: pagefind --site site
+        require: pagefind
+        install_hint: "Install via pagefind-tool: https://github.com/steelcj/pagefind-tool"
+
+  deploy:
+    description: Deploy the built site to the production server
+    steps: []  # Not yet defined — see ROADMAP.md

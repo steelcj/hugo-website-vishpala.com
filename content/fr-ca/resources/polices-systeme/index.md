@@ -1,35 +1,44 @@
 ---
-title: "Polices système — Pourquoi nous ne chargeons pas de polices personnalisées"
+title: "Typographie — Polices système et Atkinson Hyperlegible"
 date: 2026-06-15
-description: "Le cas pour system-ui : pourquoi vishpala.com utilise la pile de polices native de l'appareil plutôt que de charger des polices externes, et ce que cela signifie pour l'accessibilité, la performance et la souveraineté."
+description: "L'approche typographique de vishpala.com : system-ui par défaut, avec Atkinson Hyperlegible disponible comme alternative accessible choisie par l'utilisateur, auto-hébergée sans dépendances externes."
 draft: false
 params:
-  status: "Stable"
-  version: "1.0.0"
+  status: "En vigueur"
+  version: "1.1.0"
 ---
 
-## La décision
+## L'approche
 
-Ce site utilise `system-ui, -apple-system, sans-serif` — la pile de polices native de l'appareil — pour tout le texte. Nous ne chargeons pas Google Fonts, des polices personnalisées auto-hébergées, ni aucun fichier de police externe.
+Ce site utilise `system-ui, sans-serif` — la pile typographique native de l'appareil — comme typographie par défaut. Aucune police n'est chargée depuis des sources externes. Comme alternative sélectionnable par l'utilisateur, Atkinson Hyperlegible est disponible et auto-hébergée : tous les fichiers de polices sont servis directement depuis ce site, sans requêtes vers des tiers.
 
-Il s'agit d'une décision délibérée prise sur la base de l'accessibilité, de la performance et de la souveraineté.
+Le sélecteur de police (`Aa`) dans l'en-tête du site permet de choisir entre les deux options. Votre préférence est sauvegardée et appliquée à chaque visite ultérieure.
 
-## Accessibilité
+## System-ui — la valeur par défaut
 
-Les polices système sont les polices que les fournisseurs de systèmes d'exploitation ont le plus optimisées pour la lisibilité à l'écran, à toutes les tailles, toutes les densités d'affichage et tous les paramètres d'accessibilité. San Francisco sur macOS et iOS, Segoe UI sur Windows et Roboto sur Android sont chacune le produit d'un investissement significatif.
+Les polices système sont celles que les fournisseurs de systèmes d'exploitation ont le plus optimisées pour la lisibilité à l'écran, quelle que soit la taille, la densité d'affichage ou les paramètres d'accessibilité. San Francisco sur macOS et iOS, Segoe UI sur Windows et Roboto sur Android sont chacune le fruit d'un investissement important en matière d'hinting, d'espacement et de rendu.
 
-De manière cruciale, les polices système répondent correctement aux préférences de police de l'utilisateur. Si un utilisateur a configuré son système d'exploitation pour utiliser une taille de police plus grande, ou une police spécifique pour des raisons de lisibilité, `system-ui` hérite de ces préférences. Une police web personnalisée les remplace — ce qui constitue un obstacle pour les utilisateurs qui dépendent de ces préférences.
+Les polices système respectent les préférences typographiques propres à l'utilisateur. Si un utilisateur a configuré son système d'exploitation pour utiliser une taille de police plus grande ou une police spécifique pour des raisons de lisibilité, `system-ui` hérite de ces préférences. Pour les utilisateurs qui dépendent de ces préférences, cet héritage est important.
 
-Le Centre de recherche sur la conception inclusive de l'Université OCAD, dont les travaux façonnent directement notre pratique en matière d'accessibilité, utilise cette approche.
+`system-ui` n'introduit aucune dépendance externe et n'impose aucune charge de maintenance d'infrastructure.
 
-## Performance
+## Atkinson Hyperlegible — l'alternative accessible
 
-Chaque fichier de police personnalisée est une requête réseau. Avec `system-ui`, le texte s'affiche immédiatement en utilisant une police déjà présente sur l'appareil. Il n'y a pas de texte invisible, pas de décalage de mise en page, et aucune dépendance à un réseau de diffusion de polices.
+Atkinson Hyperlegible a été conçue par le Braille Institute spécifiquement pour les lecteurs malvoyants. Chaque caractère est formé de manière unique pour éviter les erreurs de lecture — les formes des lettres souvent confondues (1/l/I, 0/O, rn/m) sont délibérément différenciées. Le Braille Institute l'a publiée sous la licence SIL Open Font Licence 1.1, autorisant l'utilisation et la redistribution libres.
 
-## Souveraineté
+La police est servie entièrement depuis l'infrastructure propre à ce site. Les huit fichiers de polices — normale, italique, grasse et grasse italique en latin et latin étendu — ne sont chargés que lorsque vous choisissez Atkinson, et uniquement depuis ce domaine. Aucune requête vers un tiers n'est effectuée.
 
-Charger des polices depuis Google Fonts établit une connexion aux serveurs de Google à chaque chargement de page, divulguant l'adresse IP du visiteur. `system-ui` n'introduit aucune dépendance externe d'aucune sorte et n'impose aucune charge de maintenance infrastructurelle.
+Le Centre de recherche en design inclusif de l'Université OCAD, dont les travaux informent directement notre pratique de l'accessibilité, documente Atkinson Hyperlegible comme police recommandée pour l'accessibilité des malvoyants.
 
-## Compromis
+## Souveraineté et performance
 
-Le compromis est la cohérence visuelle entre les plateformes. Une page s'affiche en San Francisco sur macOS et en Segoe UI sur Windows. Nous acceptons ce compromis car les avantages en matière d'accessibilité et de souveraineté l'emportent sur la valeur d'un rendu identique entre les appareils — particulièrement pour un studio dont la pratique est fondée sur les principes de conception inclusive.
+Aucune des deux options typographiques ne charge des polices depuis Google Fonts ou toute autre source externe. Il n'y a pas de connexion à un réseau de distribution de polices tiers et aucune divulgation des adresses IP des visiteurs à des fournisseurs de polices.
+
+Lorsque system-ui est actif, le texte s'affiche immédiatement en utilisant une police déjà présente sur l'appareil — sans requête réseau, sans flash de texte invisible, sans décalage de mise en page. Lorsqu'Atkinson Hyperlegible est actif, les fichiers de polices sont chargés depuis ce serveur lors de la première utilisation, puis mis en cache par le navigateur.
+
+## Historique des versions
+
+| Version | Date | Notes |
+|---------|------|-------|
+| 1.1.0 | 2026-06-28 | Mise à jour pour refléter l'ajout d'Atkinson Hyperlegible comme option sélectionnable par l'utilisateur |
+| 1.0.0 | 2026-06-15 | Version initiale |

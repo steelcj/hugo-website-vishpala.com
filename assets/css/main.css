@@ -1,3 +1,50 @@
+/* ─── Atkinson Hyperlegible — self-hosted, SIL OFL 1.1 ──────────────────── */
+/* Designed by the Braille Institute for low-vision readers.                  */
+/* Active when [data-font="atkinson"] is set on <html>.                       */
+
+@font-face {
+  font-family: 'Atkinson Hyperlegible';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/atkinson-hyperlegible-latin-ext-400-normal.woff2') format('woff2'),
+       url('/fonts/atkinson-hyperlegible-latin-400-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Atkinson Hyperlegible';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/atkinson-hyperlegible-latin-ext-400-italic.woff2') format('woff2'),
+       url('/fonts/atkinson-hyperlegible-latin-400-italic.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Atkinson Hyperlegible';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/atkinson-hyperlegible-latin-ext-700-normal.woff2') format('woff2'),
+       url('/fonts/atkinson-hyperlegible-latin-700-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Atkinson Hyperlegible';
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/atkinson-hyperlegible-latin-ext-700-italic.woff2') format('woff2'),
+       url('/fonts/atkinson-hyperlegible-latin-700-italic.woff2') format('woff2');
+}
+
+/* ─── Font toggle — applies Atkinson when active ────────────────────────── */
+[data-font="atkinson"] body,
+[data-font="atkinson"] button,
+[data-font="atkinson"] input,
+[data-font="atkinson"] select,
+[data-font="atkinson"] textarea {
+  font-family: 'Atkinson Hyperlegible', Arial, sans-serif;
+  line-height: 1.75;
+}
+
 /* ─── Custom properties ─────────────────────────────────────────────────── */
 
 :root {
@@ -142,32 +189,164 @@ body {
   gap: 0.5rem;
 }
 
-.lang-switch {
+/* ─── Header control buttons — shared sizing ─────────────────────────────── */
+/* All three trigger buttons (globe, Aa, search) share the same fixed height  */
+/* so they are always identical regardless of font or icon metrics.            */
+
+.lang-switcher-trigger,
+.font-toggle,
+.search-trigger {
+  height: 2rem;
+  padding: 0 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 2px solid var(--black);
+  cursor: pointer;
+  color: var(--black);
+  line-height: 1;
+  box-sizing: border-box;
+}
+
+.lang-switcher-trigger:hover,
+.lang-switcher:focus-within .lang-switcher-trigger,
+.font-toggle:hover,
+.search-trigger:hover,
+.search-trigger[aria-expanded="true"] {
+  background: var(--black);
+  color: var(--white);
+}
+
+/* Font toggle — additional type styles */
+.font-toggle {
+  font-family: inherit;
+  font-size: var(--fs-meta);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+[data-font="atkinson"] .font-toggle {
+  font-family: 'Atkinson Hyperlegible', Arial, sans-serif;
+}
+
+/* Font switcher panel — same pattern as lang-switcher */
+.font-switcher {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.font-switcher-panel {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: var(--white);
+  border: 2px solid var(--black);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 200px;
+  z-index: 150;
+}
+
+.font-switcher:hover .font-switcher-panel,
+.font-switcher:focus-within .font-switcher-panel {
+  display: block;
+}
+
+.font-switcher-panel li { margin: 0; padding: 0; }
+
+.font-switcher-panel button {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 2.75rem;
+  text-align: left;
+  padding: 0 0.75rem;
+  font-size: var(--fs-meta);
+  font-weight: 700;
+  color: var(--black);
+  background: none;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+
+.font-switcher-panel button:hover,
+.font-switcher-panel button:focus {
+  background: var(--black);
+  color: var(--white);
+  outline: none;
+}
+
+.font-switcher-panel button[aria-pressed="true"] {
+  background: var(--colour-surface);
+}
+
+/* Each font name renders in its own typeface */
+.font-switcher-panel .option-system {
+  font-family: system-ui, sans-serif;
+}
+
+.font-switcher-panel .option-atkinson {
+  font-family: 'Atkinson Hyperlegible', Arial, sans-serif;
+}
+
+/* Language switcher */
+.lang-switcher {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.lang-switcher-trigger {
+  /* sizing via shared rule above */
+}
+
+.lang-switcher-panel {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: var(--white);
+  border: 2px solid var(--black);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  min-width: 120px;
+  z-index: 150;
+}
+
+.lang-switcher:hover .lang-switcher-panel,
+.lang-switcher:focus-within .lang-switcher-panel {
+  display: block;
+}
+
+.lang-switcher-panel li { margin: 0; padding: 0; }
+
+.lang-switcher-panel a {
+  display: block;
+  padding: 0.5rem 0.75rem;
   font-family: system-ui, sans-serif;
   font-size: var(--fs-meta);
   font-weight: 700;
   color: var(--black);
   text-decoration: none;
-  border: 2px solid var(--black);
-  padding: 2px 8px;
-  letter-spacing: 0.05em;
+  white-space: nowrap;
 }
 
-.lang-switch:hover {
+.lang-switcher-panel a:hover,
+.lang-switcher-panel a:focus {
   background: var(--black);
   color: var(--white);
+  outline: none;
 }
 
 .search-trigger {
-  background: none;
-  border: 2px solid var(--black);
-  padding: 4px 6px;
-  cursor: pointer;
-  color: var(--black);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
+  /* sizing via shared rule above */
 }
 
 .search-trigger:hover { background: var(--black); color: var(--white); }
@@ -199,6 +378,11 @@ body {
 
 .site-nav a:hover { text-decoration: underline; }
 .site-nav a[aria-current="page"] { font-weight: 700; text-decoration: underline; }
+
+/* Burger button — hidden at wide viewports */
+.menu-toggle {
+  display: none;
+}
 
 /* ─── Homepage grid ──────────────────────────────────────────────────────── */
 
@@ -279,11 +463,51 @@ body {
 
 @media (max-width: 600px) {
   .home-grid { grid-template-columns: 1fr; }
-  .site-nav ul { gap: var(--space-md); flex-direction: column; align-items: flex-start; }
   .block-projects,
   .block-areas,
   .block-resources,
   .block-about { grid-column: 1 / -1; }
+
+  /* Show burger button */
+  .menu-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: none;
+    border: 2px solid var(--black);
+    padding: 4px 8px;
+    cursor: pointer;
+    font-family: system-ui, sans-serif;
+    font-size: var(--fs-meta);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--black);
+    grid-column: 1 / -1;
+    grid-row: 3;
+  }
+
+  .menu-toggle:hover {
+    background: var(--black);
+    color: var(--white);
+  }
+
+  /* Hide nav by default; show when open */
+  .site-nav {
+    display: none;
+    grid-column: 1 / -1;
+    grid-row: 4;
+  }
+
+  .site-nav[data-open] {
+    display: block;
+  }
+
+  .site-nav ul {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-sm);
+    padding: var(--space-sm) 0;
+  }
 }
 
 /* ─── Inner page main ────────────────────────────────────────────────────── */

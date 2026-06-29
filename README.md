@@ -1,6 +1,6 @@
 # hugo-website-vishpala
 
-Hugo static site with Pagefind search and bilingual support (en-ca / fr-ca).
+Hugo static site with Pagefind search and multilingual support (en-ca / fr-ca / es).
 
 This is a site mockup for vishpala.com
 
@@ -30,14 +30,15 @@ Isolated and os agnostic tool that does not make changes to the host OS
 
 Custom tool pattern install of all things pagefind, isolated from host os. 
 
-- Pagefind v1.5.1 or later — see `docs/` for installation guide
+- Pagefind v1.5.1 or later — see `docs/en-ca/` for installation guide
 
 ## Project structure
 
 ```
 content/
-├── en-ca/     English content
-└── fr-ca/     French content
+├── en-ca/     English (Canada) content
+├── fr-ca/     French (Canada) content
+└── es/        Spanish content
 layouts/
 ├── index.html             Homepage template
 └── _default/
@@ -48,7 +49,9 @@ assets/css/main.css        All styles
 static/
 ├── img/vishpala-mark.svg  Logo mark
 └── js/search.js           Pagefind headless search
-scripts/build.sh           Hugo + Pagefind build script
+scripts/build.py           Pipeline executor — reads build.yaml
+scripts/build.yaml         Build and deploy pipeline definition
+docs/en-ca/                Project documentation (English)
 ```
 
 ## Development
@@ -65,17 +68,17 @@ Once hugo tool is setup you can run your hugo commands and update hugo anywhere 
 hugo server
 ```
 
-Search requires a built index — run `bash scripts/build.sh` first then `hugo server` to have search available.
+Search requires a built index — run `python scripts/build.py` first then `hugo server` to have search available.
 
 ## Build, Test and Deploy
 
 ### General Testing Process
 
 ```bash
-bash scripts/build.sh
+python scripts/build.py
 ```
 
-the above command setsup the pagefind search index by running these two command for you:
+the above command reads `scripts/build.yaml` and runs each step in the declared order:
 
 ```bash
 hugo --minify

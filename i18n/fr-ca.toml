@@ -1,9 +1,26 @@
-all_projects = "Tous les projets"
-all_areas = "Tous les domaines"
-all_resources = "Toutes les ressources"
-read_more = "Lire la suite"
-back_to = "Retour à"
-skip_to_content = "Passer au contenu principal"
-language_toggle = "English"
-copyright = "Tous droits réservés."
-license = "CC BY-SA 4.0"
+[all_projects]
+other = "Tous les projets"
+
+[all_areas]
+other = "Tous les domaines"
+
+[all_resources]
+other = "Toutes les ressources"
+
+[read_more]
+other = "Lire la suite"
+
+[back_to]
+other = "Retour à"
+
+[skip_to_content]
+other = "Passer au contenu principal"
+
+[copyright]
+other = "Tous droits réservés."
+
+[license]
+other = "CC BY-SA 4.0"
+
+[menu]
+other = "menu"

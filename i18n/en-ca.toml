@@ -1,9 +1,26 @@
-all_projects = "All projects"
-all_areas = "All areas"
-all_resources = "All resources"
-read_more = "Read more"
-back_to = "Back to"
-skip_to_content = "Skip to main content"
-language_toggle = "Français"
-copyright = "All rights reserved."
-license = "CC BY-SA 4.0"
+[all_projects]
+other = "All projects"
+
+[all_areas]
+other = "All areas"
+
+[all_resources]
+other = "All resources"
+
+[read_more]
+other = "Read more"
+
+[back_to]
+other = "Back to"
+
+[skip_to_content]
+other = "Skip to main content"
+
+[copyright]
+other = "All rights reserved."
+
+[license]
+other = "CC BY-SA 4.0"
+
+[menu]
+other = "menu"
